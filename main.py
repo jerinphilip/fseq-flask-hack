@@ -2,6 +2,7 @@
 from flask import Flask
 from flask import request
 from flask import jsonify
+from flask import render_template
 from interactive import build_instance
 from tokenizer import SPTokenizer
 
@@ -50,6 +51,19 @@ app.config['JSON_AS_ASCII'] = False
 @app.route('/index-old')
 def hello():
     return 'Hello, World!'
+
+@app.route('/babel/gui', methods=['POST', 'GET'])
+def guitranslate():
+    sentence = {"id": '', "content": ""}
+    if request.method == 'GET':
+        return render_template('index.html', sentence=sentence)
+    if request.method == 'POST':
+        lines = request.form['src'].splitlines()
+        results = babel_fish(lines)
+        results = list(map(lambda x: x["hypotheses"][0]["prediction_raw"], results))
+        serialized = '\n'.join(results)
+        sentence = {"id": '', "content": request.form['src'], "tgt": serialized}
+        return render_template('index.html', sentence=sentence)
 
 @app.route('/babel', methods=['POST', 'GET'])
 def translate():
