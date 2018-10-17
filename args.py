@@ -24,5 +24,23 @@ class Args:
 
 
 ckpt = '/scratch/jerin/nat+iitb/checkpoints/unigram/8000/en-hi/transformer/checkpoint_best.pt'
-args = Args(path=ckpt, max_tokens=1000, task='translation', source_lang='en', target_lang='hi', buffer_size=2, data=['data/'])
+args = Args(
+                path=ckpt, 
+                max_tokens=1000, 
+                task='translation', 
+                source_lang='en', 
+                target_lang='hi', 
+                buffer_size=2, 
+                data=['data/']
+            )
 
+ckpt = '/scratch/jerin/massive-multi.ckpt'
+multi_args = Args(
+                path=ckpt, 
+                max_tokens=1000, 
+                task='translation', 
+                source_lang='src', 
+                target_lang='tgt', 
+                buffer_size=2, 
+                data=['data/']
+            )

@@ -179,8 +179,7 @@ def build_translator(args):
     return translate
 
 
-def build_instance():
-    from args import args
+def build_instance(args):
     parser = options.get_generation_parser(interactive=True)
     default_args = options.parse_args_and_arch(parser)
     kw = dict(default_args._get_kwargs())
@@ -189,7 +188,8 @@ def build_instance():
     return translate
 
 if __name__ == '__main__':
-    translate = build_instance()
+    from args import args
+    translate = build_instance(args)
     sample = next(iter(buffered_read(args.buffer_size)))
     results = translate(sample)
     from pprint import pprint

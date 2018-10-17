@@ -20,6 +20,33 @@
                     <div class="row row-eq-height">
                         <div class="col">
                             <input type="hidden" name="src_id" value="{{sentence.id}}">
+                            <div class="input-group">
+                                  <div class="input-group-prepend">
+                                      <span class="input-group-text" id="">Source</span>
+                                  </div>
+                                <select name="source_lang" class="form-control">
+                                    <option value="en">English</option>
+                                    <option value="ml">Malayalam</option>
+                                    <option value="ta">Tamil</option>
+                                    <option value="te">Telugu</option>
+                                    <option value="ur">Urdu</option>
+                                    <option value="hi">Hindi</option>
+                                    <option value="bn">Bengali</option>
+                                </select>
+                                  <div class="input-group-prepend">
+                                      <span class="input-group-text" id="">Target</span>
+                                  </div>
+                                <select name="translate_to" class="form-control">
+                                    <option value="en">English</option>
+                                    <option value="ml">Malayalam</option>
+                                    <option value="ta">Tamil</option>
+                                    <option value="te">Telugu</option>
+                                    <option value="ur">Urdu</option>
+                                    <option value="hi">Hindi</option>
+                                    <option value="bn">Bengali</option>
+                                </select>
+                            </div>
+
                             <div class="form-group">
                                 <textarea class="form-control translation"
                                           style="font-size: 2em;"
