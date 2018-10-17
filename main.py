@@ -105,6 +105,8 @@ def multiguitranslate():
         #lines = list(map(lambda x: x.encode().decode("utf-8"), lines))
         translate_to = request.form['translate_to']
         source_lang = request.form['source_lang']
+        sentence["translate_to"] = translate_to
+        sentence["source_lang"] = source_lang
         results = agfish(lines, translate_to, source_lang)
         results = list(map(lambda x: x["hypotheses"][0]["prediction_raw"], results))
         serialized = '\n'.join(results)
