@@ -85,7 +85,7 @@ def hello():
 def guitranslate():
     sentence = {"id": '', "content": "", "translate_to": "", "source_lang": ""}
     if request.method == 'GET':
-        return render_template('index.html', sentence=sentence)
+        return render_template('index.html', sentence=sentence, multi=False)
     if request.method == 'POST':
         print(dict(request.form))
         lines = request.form['src'].splitlines()
@@ -93,13 +93,13 @@ def guitranslate():
         results = list(map(lambda x: x["hypotheses"][0]["prediction_raw"], results))
         serialized = '\n'.join(results)
         sentence = {"id": '', "content": request.form['src'], "tgt": serialized}
-        return render_template('index.html', sentence=sentence)
+        return render_template('index.html', sentence=sentence, multi=False)
 
 @app.route('/babel/multi-gui', methods=['POST', 'GET'])
 def multiguitranslate():
     sentence = {"id": '', "content": "", "translate_to": "", "source_lang": ""}
     if request.method == 'GET':
-        return render_template('index.html', sentence=sentence)
+        return render_template('index.html', sentence=sentence, multi=True)
     if request.method == 'POST':
         lines = request.form['src'].splitlines()
         #lines = list(map(lambda x: x.encode().decode("utf-8"), lines))
@@ -111,7 +111,7 @@ def multiguitranslate():
         results = list(map(lambda x: x["hypotheses"][0]["prediction_raw"], results))
         serialized = '\n'.join(results)
         sentence = {"id": '', "content": request.form['src'], "tgt": serialized}
-        return render_template('index.html', sentence=sentence)
+        return render_template('index.html', sentence=sentence, multi=True)
 
 
 @app.route('/babel', methods=['POST', 'GET'])

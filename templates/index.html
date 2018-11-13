@@ -11,6 +11,9 @@
             <p class="lead">Please type in the first box to get translation.</p>
             <hr class="my-4">
             <p>Happy translating!</p>
+            <ul>
+                <li> Queries in separate lines will improve results. </li>
+            </ul>
         </div>
     </div>
     <div class="col-md-8 col-sm-12">
@@ -20,6 +23,7 @@
                     <div class="row row-eq-height">
                         <div class="col">
                             <input type="hidden" name="src_id" value="{{sentence.id}}">
+                            {% if multi %}
                             <div class="input-group">
                                   <div class="input-group-prepend">
                                       <span class="input-group-text" id="">Source</span>
@@ -46,6 +50,7 @@
                                     <option value="bn">Bengali</option>
                                 </select>
                             </div>
+                            {% endif %}
 
                             <div class="form-group">
                                 <textarea class="form-control translation"

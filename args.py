@@ -23,7 +23,7 @@ class Args:
         return '\n'.join(lines)
 
 
-ckpt = '/scratch/jerin/nat+iitb/checkpoints/unigram/8000/en-hi/transformer/checkpoint_best.pt'
+ckpt = 'checkpoints/iitb-best.ckpt'
 args = Args(
                 path=ckpt, 
                 max_tokens=1000, 
@@ -34,7 +34,7 @@ args = Args(
                 data=['data/']
             )
 
-ckpt = '/scratch/jerin/massive-multi.ckpt'
+ckpt = 'checkpoints/massive-multi.ckpt'
 multi_args = Args(
                 path=ckpt, 
                 max_tokens=1000, 
