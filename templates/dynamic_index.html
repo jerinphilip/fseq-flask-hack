@@ -1,0 +1,131 @@
+{% extends 'layout.html' %}
+
+{% block title %} translate {% endblock %}
+
+{% block body %}
+
+
+<div class="row pr-4 pl-4 row-eq-height">
+    <div class="col-md-4 col-sm-12">
+        <div class="jumbotron bg-white border-right">
+            <h1 class="display-5">Instructions</h1>
+            <p class="lead">Please type in the first box to get translation.</p>
+            <hr class="my-4">
+            <p>Happy translating!</p>
+            <ul>
+                <li> Queries in separate lines will improve results. </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-8 col-sm-12">
+        <div class="row">
+            <div class="col-12">
+                <form action="" method="post">
+                    <div class="row row-eq-height">
+                        <div class="col">
+                            <input type="hidden" name="src_id" value="">
+                            {% if multi %}
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"> System </span>
+                                </div>
+                                <select name="system" class="form-control" id="system">
+                                    <option value="mm-v1">multilingual</option>
+                                </select>
+                                  <div class="input-group-prepend">
+                                      <span class="input-group-text" id="">Source</span>
+                                  </div>
+                                <select name="source_lang" class="form-control" id="src_lang">
+                                    <option value="-detect-">-detect-</option>
+                                    <option value="en">English</option>
+                                    <option value="ml">Malayalam</option>
+                                    <option value="ta">Tamil</option>
+                                    <option value="te">Telugu</option>
+                                    <option value="ur">Urdu</option>
+                                    <option value="hi">Hindi</option>
+                                    <option value="bn">Bengali</option>
+                                </select>
+                                  <div class="input-group-prepend">
+                                      <span class="input-group-text" id="">Target</span>
+                                  </div>
+                                <select name="translate_to" class="form-control" id="tgt_lang">
+                                    <option value="en">English</option>
+                                    <option value="ml">Malayalam</option>
+                                    <option value="ta">Tamil</option>
+                                    <option value="te">Telugu</option>
+                                    <option value="ur">Urdu</option>
+                                    <option value="hi">Hindi</option>
+                                    <option value="bn">Bengali</option>
+                                </select>
+                            </div>
+                            {% endif %}
+
+                            <div class="form-group">
+                                <textarea class="form-control translation"
+                                          style="font-size: 2em;"
+                                          rows="4" id="src" name="src"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-success
+                                    form-submit btn-block"
+                                        > Submit
+                                </button>
+                            </div>
+
+                            <div class="form-group">
+                                <textarea class="form-control translation" 
+                                          style="font-size: 2em;"
+                                          placeholder="Your translation here.. "
+                                          rows="4" id="tgt" name="tgt"></textarea>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+//setup before functions
+    let typingTimer;                //timer identifier
+    let doneTypingInterval = 1000;  //time in ms (5 seconds)
+    let src = document.getElementById('src');
+
+    //on keyup, start the countdown
+    src.addEventListener('keyup', () => {
+            clearTimeout(typingTimer);
+                if (src.value) {
+                    typingTimer = setTimeout(doneTyping, doneTypingInterval);
+                }
+    });
+
+    //user is "finished typing," do something
+    function doneTyping () {
+            //do something
+        var f = function(x){ return document.getElementById(x).value };
+        var g = function(x) { 
+            var e = document.getElementById(x); 
+            return e.options[e.selectedIndex].value;
+        };
+
+        var payload = {
+            src_lang: g("src_lang"),
+            tgt_lang: g("tgt_lang"),
+            content: f("src"),
+            system: g("system")
+        };
+        console.log("Payload:");
+        console.log(payload);
+
+        $.post("/babel/api/", payload, function(response){
+            var tgt = document.getElementById("tgt");
+            console.log(response);
+            var hypothesis = response[0]["hypotheses"][0]["prediction_raw"];
+            tgt.value = hypothesis;
+        });
+    }
+</script>
+
+{% endblock %}

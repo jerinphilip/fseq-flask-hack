@@ -73,6 +73,11 @@ agfish = agwrapped(agfish)
 babel_fish = build_instance(args)
 babel_fish = twrapped(babel_fish)
 
+models = {
+    "wat-en-hi": babel_fish,
+    "multi": agfish
+}
+
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 
@@ -127,6 +132,39 @@ def translate():
     
     return jsonify(results)
 
+mtok_factory = {
+        "mm-v1": (build_instance(multi_args), SentencePieceTokenizer()),
+        "iitb-en-hi": (build_instance(args), None),
+}
+
+
+@app.route('/babel/api/', methods=['POST'])
+def api_translate():
+    content = request.form['content'].splitlines()
+    # If required, do a sentence tokenization at language level.
+    # More broken sentences => Better results
+    src_lang = request.form['src_lang']
+    tgt_lang = request.form['tgt_lang']
+    tag = request.form['system']
+    model, tokenize = mtok_factory[tag]
+
+    sequences = []
+    for line in content:
+        if src_lang == '-detect-':
+            src_lang, tokens = tokenize(line)
+        else:
+            src_lang, tokens = tokenize(line, lang=src_lang)
+        tokens_space_joined = ' '.join(tokens)
+        injected = '__t2{xx}__ {enc}'.format(xx=tgt_lang, enc=tokens_space_joined)
+        sequences.append(injected)
+
+    ordered_results = model(sequences)
+    structured_output = process(ordered_results, sequences, content)
+    return jsonify(structured_output)
+
+@app.route('/babel/frontend', methods=['GET'])
+def frontend():
+    return render_template('dynamic_index.html', multi=True)
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=1618)
