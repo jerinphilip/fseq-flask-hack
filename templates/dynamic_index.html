@@ -35,7 +35,7 @@
                                   <div class="input-group-prepend">
                                       <span class="input-group-text" id="">Source</span>
                                   </div>
-                                <select name="source_lang" class="form-control" id="src_lang">
+                                <select name="source_lang" class="form-control" id="src_lang" onchange="doneTyping();">
                                     <option value="-detect-">-detect-</option>
                                     <option value="en">English</option>
                                     <option value="ml">Malayalam</option>
@@ -48,7 +48,7 @@
                                   <div class="input-group-prepend">
                                       <span class="input-group-text" id="">Target</span>
                                   </div>
-                                <select name="translate_to" class="form-control" id="tgt_lang">
+                                <select name="translate_to" class="form-control" id="tgt_lang" onchange="doneTyping();">
                                     <option value="en">English</option>
                                     <option value="ml">Malayalam</option>
                                     <option value="ta">Tamil</option>
