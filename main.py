@@ -1,13 +1,20 @@
-
 from flask import Flask, redirect
 from flask import request
 from flask import jsonify
 from flask import render_template
+from flask import send_file
+
 from interactive import build_instance
 from tokenizer import SPTokenizer
 from pf.sentencepiece import SentencePieceTokenizer
 from args import args, multi_args, hi_en_args
 
+# standard lib imports
+import re
+from io import BytesIO
+
+# tts related imports
+from tts import api as tts_engine
 spt = SentencePieceTokenizer()
 
 def process(ordered_results, tokenized, lines):
@@ -165,7 +172,7 @@ def translate():
 
     lines = contents.splitlines()
     results = babel_fish(lines)
-    
+  
     return jsonify(results)
 
 mtok_factory = {
@@ -201,7 +208,33 @@ def api_translate():
 def frontend():
     return render_template('dynamic_index.html', multi=True)
 
-if __name__ == '__main__':
-    app.run('0.0.0.0', port=1618)
+############# tts code ############
 
+
+tts_model = tts_engine.get_model('tts-data/checkpoint.pth')
+
+@app.route('/babel/tts', methods=['GET'])
+def tts_home():
+    return render_template('tts_index.html', audio_src='', sentence=None)
+
+@app.route('/babel/tts/api', methods=['GET'])
+def tts_speak():
+    content = request.args['q'].splitlines()
+    buf = BytesIO()
+
+    for line in content:
+        line = line.strip()
+        tts_engine.tts(tts_model, line, buf)
+
+    buf.seek(0)
+    return send_file(
+        buf,
+        as_attachment=True,
+        attachment_filename='audio.wav',
+        mimetype='audio/wav'
+    )
+    # lines = re.split(u'।|\n', contents)
+
+if __name__ == '__main__':
+    app.run('0.0.0.0', port=1618, debug=True)
 

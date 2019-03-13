@@ -1,0 +1,65 @@
+{% extends 'layout.html' %}
+
+{% block title %} translate {% endblock %}
+
+{% block body %}
+
+<div class="row pr-4 pl-4 row-eq-height">
+    <div class="col-md-4 col-sm-12">
+        <div class="jumbotron bg-white border-right">
+            <h1 class="display-5">Instructions</h1>
+            <p class="lead">Please enter a piece of Hindi text in the box to convert it to speech.</p>
+            <ul>
+                <li> Currently treats the entire text as one sentence. </li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-8 col-sm-12">
+        <div class="row">
+            <div class="col-12">
+                <form action="">
+                    <div class="row row-eq-height">
+                        <div class="col">
+                            <div class="form-group">
+                                <textarea class="form-control tts"
+                                          id="tts_input_text"
+                                          style="font-size: 2em;"
+                                          rows="4" id="src" name="src">{{sentence.content}}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-success
+                                    form-submit btn-block" 
+					type="button"
+					onclick="play_audio();"
+                                        > Submit
+                                </button>
+                            </div>
+
+                            <div class="form-group">
+                                <audio id="tts_output" 
+                                    controls
+                                    src="">
+                                        Your browser does not support the
+                                        <code>audio</code> element.
+                                </audio>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function play_audio() {
+        text = document.getElementById('tts_input_text').value;
+        var request = new XMLHttpRequest();
+        var params = '/tts/api?q=' + text;
+	var output = document.getElementById('tts_output');
+	output.src = params;
+	
+    }
+</script>
+
+{% endblock %}

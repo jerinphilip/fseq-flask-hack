@@ -122,7 +122,12 @@
         $.post("/babel/api/", payload, function(response){
             var tgt = document.getElementById("tgt");
             console.log(response);
-            var hypothesis = response[0]["hypotheses"][0]["prediction_raw"];
+            hypotheses = [];
+            for(var i=0; i < response.length; i++){
+                hypotheses.push(response[i]["hypotheses"][0]["prediction_raw"]);
+            }
+            // var hypothesis = response[0]["hypotheses"][0]["prediction_raw"];
+            var hypothesis = hypotheses.join("\n")
             tgt.value = hypothesis;
         });
     }

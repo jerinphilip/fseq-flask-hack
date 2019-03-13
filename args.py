@@ -34,7 +34,28 @@ args = Args(
                 data=['data/']
             )
 
-ckpt = 'checkpoints/massive-multi.ckpt'
+_ckpt = 'checkpoints/iitb-hi-en.ckpt'
+hi_en_args = Args(
+                path=_ckpt, 
+                max_tokens=1000, 
+                task='translation', 
+                source_lang='hi', 
+                target_lang='en', 
+                buffer_size=2, 
+                data=['data/']
+            )
+# ckpt = 'checkpoints/massive-multi.ckpt'
+# multi_args = Args(
+#                 path=ckpt, 
+#                 max_tokens=1000, 
+#                 task='translation', 
+#                 source_lang='src', 
+#                 target_lang='tgt', 
+#                 buffer_size=2, 
+#                 data=['data/']
+#             )
+
+ckpt = 'checkpoints/mm-new.ckpt'
 multi_args = Args(
                 path=ckpt, 
                 max_tokens=1000, 
@@ -42,5 +63,5 @@ multi_args = Args(
                 source_lang='src', 
                 target_lang='tgt', 
                 buffer_size=2, 
-                data=['data/']
+                data=['data/mm-all/']
             )
