@@ -1,12 +1,12 @@
 
-from flask import Flask
+from flask import Flask, redirect
 from flask import request
 from flask import jsonify
 from flask import render_template
 from interactive import build_instance
 from tokenizer import SPTokenizer
 from pf.sentencepiece import SentencePieceTokenizer
-from args import args, multi_args
+from args import args, multi_args, hi_en_args
 
 spt = SentencePieceTokenizer()
 
@@ -54,12 +54,28 @@ def twrapped(f):
         return process(ordered_results, tokenized, lines)
     return __inner
 
+def ttwrapped(f):
+    def __inner(lines):
+        hi_path = 'data/hi.8000.model'
+        en_path = 'data/en.8000.model'
+
+        from collections import namedtuple
+        Pair = namedtuple('Pair', 'hi en')
+        t = Pair(en=SPTokenizer(en_path), hi=SPTokenizer(hi_path))
+        tokenized = []
+        for i, src in enumerate(lines):
+            enc = t.hi.tok(src)
+            tokenized.append(enc)
+        ordered_results = f(tokenized)
+        return process(ordered_results, tokenized, lines)
+    return __inner
 
 def agwrapped(f):
     def __inner(lines, translate_to, source_lang=None):
         tokenized = []
         for i, src in enumerate(lines):
             lang, enc = spt(src, source_lang)
+            enc = ' '.join(enc)
             injected = '__t2{xx}__ {enc}'.format(xx=translate_to, enc=enc)
             tokenized.append(injected)
         print(tokenized)
@@ -72,6 +88,10 @@ agfish = build_instance(multi_args)
 agfish = agwrapped(agfish)
 babel_fish = build_instance(args)
 babel_fish = twrapped(babel_fish)
+
+# hi_en_i = build_instance(hi_en_args)
+# hi_en_i = ttwrapped(hi_en_i)
+hi_en_i = lambda x: []
 
 models = {
     "wat-en-hi": babel_fish,
@@ -100,8 +120,24 @@ def guitranslate():
         sentence = {"id": '', "content": request.form['src'], "tgt": serialized}
         return render_template('index.html', sentence=sentence, multi=False)
 
+@app.route('/babel/gui/hi-en', methods=['POST', 'GET'])
+def _guitranslate():
+    sentence = {"id": '', "content": "", "translate_to": "", "source_lang": ""}
+    if request.method == 'GET':
+        return render_template('index.html', sentence=sentence, multi=False)
+    if request.method == 'POST':
+        print(dict(request.form))
+        lines = request.form['src'].splitlines()
+        results = hi_en_args(lines)
+        results = list(map(lambda x: x["hypotheses"][0]["prediction_raw"], results))
+        serialized = '\n'.join(results)
+        sentence = {"id": '', "content": request.form['src'], "tgt": serialized}
+        return render_template('index.html', sentence=sentence, multi=False)
+
 @app.route('/babel/multi-gui', methods=['POST', 'GET'])
 def multiguitranslate():
+    # return redirect("/babel/frontend", code=302)
+
     sentence = {"id": '', "content": "", "translate_to": "", "source_lang": ""}
     if request.method == 'GET':
         return render_template('index.html', sentence=sentence, multi=True)
@@ -136,7 +172,6 @@ mtok_factory = {
         "mm-v1": (build_instance(multi_args), SentencePieceTokenizer()),
         "iitb-en-hi": (build_instance(args), None),
 }
-
 
 @app.route('/babel/api/', methods=['POST'])
 def api_translate():
