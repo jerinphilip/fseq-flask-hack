@@ -221,9 +221,9 @@ def frontend():
 def tts_home():
     return render_template('tts_index.html', audio_src='', sentence=None)
 
-@app.route('/babel/tts/api/m1', methods=['GET'], endpoint='m0')
-@app.route('/babel/tts/api/m2', methods=['GET'], endpoint='m1')
-@app.route('/babel/tts/api/m3', methods=['GET'], endpoint='m2')
+@app.route('/babel/tts/api/m0', methods=['GET'], endpoint='m0')
+@app.route('/babel/tts/api/m1', methods=['GET'], endpoint='m1')
+@app.route('/babel/tts/api/m2', methods=['GET'], endpoint='m2')
 def tts_speak():
     content = request.args['q'].splitlines()
     buf = BytesIO()
