@@ -81,7 +81,9 @@
                                 </button>
                             </div>
                             <div class="form-group">
-                                <audio id="tts-output" controls src=""> Your browser does not support the <code>audio</code> element. </audio>
+                                <audio class="audio" id="tts-output0" controls src=""> Your browser does not support the <code>audio</code> element. </audio>
+                                <audio class="audio" id="tts-output1" controls src=""> Your browser does not support the <code>audio</code> element. </audio>
+                                <audio class="audio" id="tts-output2" controls src=""> Your browser does not support the <code>audio</code> element. </audio>
                             </div>
                         </div>
                     </div>
@@ -137,11 +139,12 @@
     }
     function playAudio() {
         text = document.getElementById('tgt').value;
-        var request = new XMLHttpRequest();
-        var params = '/babel/tts/api?q=' + text;
-        var output = document.getElementById('tts-output');
-        output.src = params;
-	
+        var audio_elements = document.getElementsByClassName("audio")
+        for (var i = 0; i <= audio_elements.length; i++) {
+            var request = new XMLHttpRequest();
+            var params = '/babel/tts/api/m${i}?q=' + text;
+            audio_elements[i].src = params;
+        }
     }
 </script>
 

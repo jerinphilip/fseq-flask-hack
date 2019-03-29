@@ -211,20 +211,26 @@ def frontend():
 ############# tts code ############
 
 
-tts_model = tts_engine.get_model('tts-data/checkpoint.pth')
+# tts_model = tts_engine.get_model('tts-data/checkpoint.pth')
+
+tts_models = {'m0' : tts_engine.get_model('tts-data/checkpoint.v2.346k.pth'),
+                'm1' : tts_engine.get_model('tts-data/checkpoint.v2.246k.pth')
+                 'm2' : tts_engine.get_model('tts-data/checkpoint.v1.138k.pth')}
 
 @app.route('/babel/tts', methods=['GET'])
 def tts_home():
     return render_template('tts_index.html', audio_src='', sentence=None)
 
-@app.route('/babel/tts/api', methods=['GET'])
+@app.route('/babel/tts/api/m1', methods=['GET'], endpoint='m0')
+@app.route('/babel/tts/api/m2', methods=['GET'], endpoint='m1')
+@app.route('/babel/tts/api/m3', methods=['GET'], endpoint='m2')
 def tts_speak():
     content = request.args['q'].splitlines()
     buf = BytesIO()
 
     for line in content:
         line = line.strip()
-        tts_engine.tts(tts_model, line, buf)
+        tts_engine.tts(tts_models[request.endpoint], line, buf)
 
     buf.seek(0)
     return send_file(
@@ -233,7 +239,6 @@ def tts_speak():
         attachment_filename='audio.wav',
         mimetype='audio/wav'
     )
-    # lines = re.split(u'।|\n', contents)
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=1618, debug=True)
