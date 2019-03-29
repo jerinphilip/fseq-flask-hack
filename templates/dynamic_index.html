@@ -65,12 +65,6 @@
                                           style="font-size: 2em;"
                                           rows="4" id="src" name="src"></textarea>
                             </div>
-                            <div class="form-group">
-                                <button class="btn btn-success
-                                    form-submit btn-block"
-                                        > Submit
-                                </button>
-                            </div>
 
                             <div class="form-group">
                                 <textarea class="form-control translation" 
@@ -78,6 +72,16 @@
                                           placeholder="Your translation here.. "
                                           rows="4" id="tgt" name="tgt"></textarea>
 
+                            </div>
+                            <div class="form-group">
+                                <button type="button" class="btn btn-success
+                                    form-submit btn-block"
+                                        onclick="playAudio();"
+                                        > Generate Audio
+                                </button>
+                            </div>
+                            <div class="form-group">
+                                <audio id="tts-output" controls src=""> Your browser does not support the <code>audio</code> element. </audio>
                             </div>
                         </div>
                     </div>
@@ -130,6 +134,14 @@
             var hypothesis = hypotheses.join("\n")
             tgt.value = hypothesis;
         });
+    }
+    function playAudio() {
+        text = document.getElementById('tgt').value;
+        var request = new XMLHttpRequest();
+        var params = '/babel/tts/api?q=' + text;
+        var output = document.getElementById('tts-output');
+        output.src = params;
+	
     }
 </script>
 
