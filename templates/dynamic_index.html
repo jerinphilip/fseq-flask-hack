@@ -81,9 +81,10 @@
                                 </button>
                             </div>
                             <div class="form-group">
-                                <audio class="audio" id="tts-output0" controls src=""> Your browser does not support the <code>audio</code> element. </audio>
-                                <audio class="audio" id="tts-output1" controls src=""> Your browser does not support the <code>audio</code> element. </audio>
-                                <audio class="audio" id="tts-output2" controls src=""> Your browser does not support the <code>audio</code> element. </audio>
+                                {% for i, name in enumerate(audio_names) %}
+                                    <p>{{name}}</p>
+                                    <audio class="audio" id="tts-output{{i}}" controls src=""> Your browser does not support the <code>audio</code> element. </audio>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>

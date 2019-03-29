@@ -204,18 +204,18 @@ def api_translate():
     structured_output = process(ordered_results, sequences, content)
     return jsonify(structured_output)
 
+paths = ['tts-data/checkpoint.v2.346k.pth', 'tts-data/checkpoint.v2.246k.pth', 'tts-data/checkpoint.v1.138k.pth']
+tts_models = {'m{}'.format(i) : tts_engine.get_model(p) for i, p  in enumerate(paths)}
+disp_names = ['.'.join(p.split('.')[1:3]) for p in paths]
+
 @app.route('/babel/frontend', methods=['GET'])
 def frontend():
-    return render_template('dynamic_index.html', multi=True)
+    return render_template('dynamic_index.html', multi=True, audio_names=disp_names)
 
 ############# tts code ############
 
 
 # tts_model = tts_engine.get_model('tts-data/checkpoint.pth')
-
-tts_models = {'m0' : tts_engine.get_model('tts-data/checkpoint.v2.346k.pth'),
-                'm1' : tts_engine.get_model('tts-data/checkpoint.v2.246k.pth')
-                 'm2' : tts_engine.get_model('tts-data/checkpoint.v1.138k.pth')}
 
 @app.route('/babel/tts', methods=['GET'])
 def tts_home():
