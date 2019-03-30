@@ -4,7 +4,7 @@ import fairseq
 # from fairseq import data, options, tasks, tokenizer, utils
 
 import numpy as np
-from pf.sentencepiece import SentencePieceTokenizer
+import pf
 
 Batch = namedtuple('Batch', 'srcs tokens lengths')
 Translation = namedtuple('Translation', 'src tgt attn')
@@ -24,6 +24,7 @@ class FairseqTranslator:
         self.tgt_dict = self.task.target_dictionary
 
         # Optimize ensemble for generation
+        # print(args.print_alignment)
         for model in models:
             model.make_generation_fast_(
                 beamable_mm_beam_size=None if args.no_beamable_mm else args.beam,
@@ -63,6 +64,7 @@ class FairseqTranslator:
     def _postprocess(self, lines, sources, translations):
         align_dict = None
         iterator = zip(lines, sources, translations)
+        exports = []
         for idx, itr in enumerate(iterator):
             line, source, _translations = itr
             translation = _translations[0]
@@ -75,13 +77,12 @@ class FairseqTranslator:
                 remove_bpe=args.remove_bpe,
             )
             export = Translation(
-                src = source,
-                tgt = hypo_tokens,
-                src_raw = None,
-                src_tgt
+                src = line,
+                tgt = hypo_str,
+                attn = translation['attention'],
             )
-            print(source, hypo_str)
-        return None
+            exports.append(export)
+        return exports
 
     def _make_batches(self, lines):
         task = self.task
@@ -108,17 +109,24 @@ class FairseqTranslator:
 
 
 class MTEngine:
-    def __init__(self, tokenizer, translator):
-        self.tokenizer = tokenizer
+    def __init__(self, translator, segmenter=None, tokenizer=None):
+        self.segmenter = segmenter or (lambda x: x.splitlines())
+        self.tokenizer = tokenizer or (lambda x: x.split())
         self.translator = translator
 
     def __call__(self, source, tgt_lang, src_lang=None):
-        lang, tokens = self.tokenizer(source)
-        src_lang = src_lang or lang
+        lang, lines = self.segmenter(source)
 
-        # Unsupervised tokenization.
-        content = ' '.join(tokens)
-        return self.translator([content])
+        sources = []
+        for line in lines:
+            lang, tokens = self.tokenizer(source)
+            src_lang = src_lang or lang
+            # Unsupervised tokenization.
+            tokens = [pf.utils.language_token(tgt_lang)] + tokens
+            content = ' '.join(tokens)
+            sources.append(content)
+
+        return self.translator(sources)
 
 
 
@@ -127,10 +135,13 @@ if __name__ ==  '__main__':
     parser = fairseq.options.get_generation_parser(interactive=True)
     default_args = fairseq.options.parse_args_and_arch(parser)
     kw = dict(default_args._get_kwargs())
+    args.enhance(print_alignment=True)
     args.enhance(**kw)
-    tokenizer = SentencePieceTokenizer()
+    # print(args)
+    tokenizer = pf.sentencepiece.SentencePieceTokenizer()
     translator = FairseqTranslator(args)
-    engine = MTEngine(tokenizer, translator)
+    segmenter = pf.segment.Segmenter()
+    engine = MTEngine(translator, segmenter, tokenizer)
     translations = engine('hello world', tgt_lang='hi')
     from pprint import pprint
     pprint(translations)
