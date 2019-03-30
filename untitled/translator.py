@@ -48,6 +48,7 @@ class FairseqTranslator:
     def __call__(self, lines):
         translations = []
         sources = []
+        idxs = []
         for batch, idx in self._make_batches(lines):
             encoder_input = {'src_tokens': batch.tokens, 'src_lengths': batch.lengths}
             translations_batch = self.translator.generate(
@@ -56,8 +57,10 @@ class FairseqTranslator:
             )
             sources.extend(batch.tokens)
             translations.extend(translations_batch)
+            idxs.extend(idx)
 
         translations = self._postprocess(lines, sources, translations)
+        translations = [x for _, x in sorted(zip(idxs, translations))]
         return translations
 
     def _postprocess(self, lines, sources, translations):
@@ -117,7 +120,7 @@ class MTEngine:
         lang, lines = self.segmenter(source)
         sources = []
         for line in lines:
-            lang, tokens = self.tokenizer(source)
+            lang, tokens = self.tokenizer(line)
             src_lang = src_lang or lang
             # Unsupervised tokenization.
             tokens = [pf.utils.language_token(tgt_lang)] + tokens

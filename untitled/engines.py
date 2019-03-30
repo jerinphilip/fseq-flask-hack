@@ -4,6 +4,11 @@ from .args import multi_args as args
 import pf
 
 
+class LineSegmenter:
+    def __call__(self, content):
+        lang = None
+        return lang, content.splitlines()
+
 
 engines = {}
 
@@ -14,6 +19,7 @@ kw = dict(default_args._get_kwargs())
 args.enhance(print_alignment=True)
 args.enhance(**kw)
 fseq_translator = FairseqTranslator(args)
+# segmenter = LineSegmenter()
 segmenter = pf.segment.Segmenter()
 tokenizer = pf.sentencepiece.SentencePieceTokenizer()
 

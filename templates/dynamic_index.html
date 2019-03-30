@@ -101,7 +101,7 @@
 <script type="text/javascript">
 //setup before functions
     let typingTimer;                //timer identifier
-    let doneTypingInterval = 250;  //time in ms (5 seconds)
+    let doneTypingInterval = 1000;  //time in ms (5 seconds)
     let src = document.getElementById('src');
 
     //on keyup, start the countdown
@@ -130,12 +130,21 @@
         console.log("Payload:");
         console.log(payload);
 
+        var detokenize = function(text){
+            console.log(text);
+            text = text.replace(/ /g, "");
+            console.log(text);
+            text = text.replace(/▁/g, " ");
+            return text.substring(1);
+        };
+
         $.post("/babel/api/", payload, function(response){
             var tgt = document.getElementById("tgt");
             console.log(response);
             hypotheses = [];
             for(var i=0; i < response.length; i++){
-                hypotheses.push(response[i].tgt);
+                text = detokenize(response[i].tgt);
+                hypotheses.push(text);
             }
             // var hypothesis = response[0]["hypotheses"][0]["prediction_raw"];
             var hypothesis = hypotheses.join("\n")
