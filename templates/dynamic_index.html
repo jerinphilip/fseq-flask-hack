@@ -135,7 +135,7 @@
             console.log(response);
             hypotheses = [];
             for(var i=0; i < response.length; i++){
-                hypotheses.push(response[i]["hypotheses"][0]["prediction_raw"]);
+                hypotheses.push(response[i].tgt);
             }
             // var hypothesis = response[0]["hypotheses"][0]["prediction_raw"];
             var hypothesis = hypotheses.join("\n")
