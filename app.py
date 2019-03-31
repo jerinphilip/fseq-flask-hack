@@ -14,10 +14,10 @@ from io import BytesIO
 import os
 
 # engines = em.engines
-from untitled.translator import MTEngine, FairseqTranslator
+from ilmulti.translator import MTEngine, FairseqTranslator
 import fairseq
-from untitled.translator import Args
-import pf
+from ilmulti.translator import Args
+import ilmulti
 
 ckpt = 'checkpoints/mm-new.ckpt'
 args = Args( 
@@ -42,8 +42,8 @@ args.enhance(print_alignment=True)
 args.enhance(**kw)
 fseq_translator = FairseqTranslator(args)
 # segmenter = LineSegmenter()
-segmenter = pf.segment.Segmenter()
-tokenizer = pf.sentencepiece.SentencePieceTokenizer()
+segmenter = ilmulti.segment.Segmenter()
+tokenizer = ilmulti.sentencepiece.SentencePieceTokenizer()
 
 engines["mm-v1"] = MTEngine(fseq_translator, segmenter, tokenizer)
 
