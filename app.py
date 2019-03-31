@@ -10,7 +10,43 @@ from io import BytesIO
 
 # tts related imports
 # from tts import api as tts_engine
-from untitled.engines import engines
+# from . import engines as em
+import os
+
+# engines = em.engines
+from untitled.translator import MTEngine, FairseqTranslator
+import fairseq
+from untitled.args import multi_args as args
+import pf
+
+
+class LineSegmenter:
+    def __call__(self, content):
+        lang = None
+        return lang, content.splitlines()
+
+
+engines = {}
+
+# Build fseq translator
+parser = fairseq.options.get_generation_parser(interactive=True)
+print(parser._actions)
+default_args = fairseq.options.parse_args_and_arch(parser)
+kw = dict(default_args._get_kwargs())
+args.enhance(print_alignment=True)
+args.enhance(**kw)
+fseq_translator = FairseqTranslator(args)
+# segmenter = LineSegmenter()
+segmenter = pf.segment.Segmenter()
+tokenizer = pf.sentencepiece.SentencePieceTokenizer()
+
+engines["mm-v1"] = MTEngine(fseq_translator, segmenter, tokenizer)
+
+
+_dir = os.path.dirname(os.path.abspath(__file__))
+template_folder = os.path.join(_dir, 'templates')
+# print(os.listdir(template_folder))
+# print(template_folder)
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
