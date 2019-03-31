@@ -4,10 +4,6 @@ from flask import jsonify
 from flask import render_template
 from flask import send_file
 
-from interactive import build_instance
-from tokenizer import SPTokenizer
-from pf.sentencepiece import SentencePieceTokenizer
-
 # standard lib imports
 import re
 from io import BytesIO
@@ -18,7 +14,6 @@ from untitled.engines import engines
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
-
 
 @app.route('/index-old')
 def hello():
