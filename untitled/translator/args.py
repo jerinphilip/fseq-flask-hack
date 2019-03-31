@@ -23,9 +23,3 @@ class Args:
         return '\n'.join(lines)
 
 
-ckpt = 'checkpoints/mm-new.ckpt'
-args = Args( 
-    path=ckpt, max_tokens=1000, task='translation',
-    source_lang='src', target_lang='tgt', buffer_size=2,
-    data=['data/mm-all/']
-)

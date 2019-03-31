@@ -16,9 +16,15 @@ import os
 # engines = em.engines
 from untitled.translator import MTEngine, FairseqTranslator
 import fairseq
-from untitled.args import multi_args as args
+from untitled.translator import Args
 import pf
 
+ckpt = 'checkpoints/mm-new.ckpt'
+args = Args( 
+    path=ckpt, max_tokens=1000, task='translation',
+    source_lang='src', target_lang='tgt', buffer_size=2,
+    data=['data/mm-all/']
+)
 
 class LineSegmenter:
     def __call__(self, content):
@@ -30,8 +36,7 @@ engines = {}
 
 # Build fseq translator
 parser = fairseq.options.get_generation_parser(interactive=True)
-print(parser._actions)
-default_args = fairseq.options.parse_args_and_arch(parser)
+default_args = fairseq.options.parse_args_and_arch(parser, input_args=['dummy-data'])
 kw = dict(default_args._get_kwargs())
 args.enhance(print_alignment=True)
 args.enhance(**kw)
