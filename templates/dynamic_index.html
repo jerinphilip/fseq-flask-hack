@@ -30,7 +30,9 @@
                                     <span class="input-group-text"> System </span>
                                 </div>
                                 <select name="system" class="form-control" id="system">
-                                    <option value="mm-v1">multilingual</option>
+                                    <option value="mm-to-en-iter3">m2en-3</option>
+                                    <option value="mm-all-iter1">m2m-3</option>
+                                    <option value="mm-all">mm-all</option>
                                 </select>
                                   <div class="input-group-prepend">
                                       <span class="input-group-text" id="">Source</span>
@@ -44,6 +46,10 @@
                                     <option value="ur">Urdu</option>
                                     <option value="hi">Hindi</option>
                                     <option value="bn">Bengali</option>
+                                    <option value="or">Oriya</option>
+                                    <option value="pa">Punjabi</option>
+                                    <option value="mr">Marathi</option>
+                                    <option value="gu">Gujarati</option>
                                 </select>
                                   <div class="input-group-prepend">
                                       <span class="input-group-text" id="">Target</span>
@@ -56,6 +62,10 @@
                                     <option value="ur">Urdu</option>
                                     <option value="hi">Hindi</option>
                                     <option value="bn">Bengali</option>
+                                    <option value="or">Oriya</option>
+                                    <option value="pa">Punjabi</option>
+                                    <option value="mr">Marathi</option>
+                                    <option value="gu">Gujarathi</option>
                                 </select>
                             </div>
                             {% endif %}
@@ -135,9 +145,8 @@
             console.log(response);
             hypotheses = [];
             for(var i=0; i < response.length; i++){
-                hypotheses.push(response[i]["hypotheses"][0]["prediction_raw"]);
+                hypotheses.push(response[i].tgt);
             }
-            // var hypothesis = response[0]["hypotheses"][0]["prediction_raw"];
             var hypothesis = hypotheses.join("\n")
             tgt.value = hypothesis;
         });
